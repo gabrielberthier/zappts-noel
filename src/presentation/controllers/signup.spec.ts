@@ -67,14 +67,10 @@ describe('SignUp Controller', () => {
   })
 
   test('Should return 500 if EmailValidator throws errror', function () {
-    class EmailValidatorStubError500 implements EmailValidator {
-      isValid (email: string): boolean {
-        throw new Error()
-      }
-    }
-
-    const emailValidatorStub = new EmailValidatorStubError500()
-    const sut = new SignUpController(emailValidatorStub)
+    const { sut, email } = sutFactory()
+    jest.spyOn(email, 'isValid').mockImplementationOnce(function () {
+      throw new Error()
+    })
 
     const httpRequest = {
       body: {
@@ -102,5 +98,20 @@ describe('SignUp Controller', () => {
     }
     sut.handle(httpRequest)
     expect(isValidSpy).toHaveBeenCalledWith('johndee@email')
+  })
+
+  test('Should return 400 if password confirmation fails', function () {
+    const { sut } = sutFactory()
+    const httpRequest = {
+      body: {
+        name: 'John T Dee',
+        email: 'johndee@email',
+        password: 'testablepassword',
+        passwordConfirm: 'otherpassword'
+      }
+    }
+    const httpResponse = sut.handle(httpRequest)
+    expect(httpResponse.statusCode).toBe(400)
+    expect(httpResponse.body).toEqual(new InvalidParamError('passwordConfirmation'))
   })
 })

@@ -1,9 +1,9 @@
 import { SignUpController } from './signup'
-import { MissingParamError, InvalidParamError, ServerError } from '../errors/index'
-import { EmailValidator } from '../protocols'
-import { AddAccount } from '../../domain/use-cases/add-account'
-import { AddAccountModel } from '../../domain/models/add-account-model'
-import { AccountModel } from '../../domain/models/account'
+import { MissingParamError, InvalidParamError, ServerError } from '../../errors/index'
+import { EmailValidator } from './email-validator'
+import { AddAccount } from '../../../domain/use-cases/add-account'
+import { AddAccountModel } from '../../../domain/models/add-account-model'
+import { AccountModel } from '../../../domain/models/account'
 
 interface SutFactoryResolved {
   sut: SignUpController
@@ -155,5 +155,26 @@ describe('SignUp Controller', () => {
     const httpResponse = sut.handle(httpRequest)
     expect(httpResponse.statusCode).toBe(400)
     expect(httpResponse.body).toEqual(new InvalidParamError('passwordConfirmation'))
+  })
+
+  test('Should return 200 if valid data is provided', function () {
+    const { sut } = sutFactory()
+
+    const httpRequest = {
+      body: {
+        name: 'John T Dee',
+        email: 'johndee@email',
+        password: 'testablepassword',
+        passwordConfirm: 'testablepassword'
+      }
+    }
+    const httpResponse = sut.handle(httpRequest)
+    expect(httpResponse.statusCode).toBe(200)
+    expect(httpResponse.body).toEqual({
+      id: 'valid_id',
+      name: 'valid_name',
+      email: 'valid_email@mail.com',
+      password: 'valid_password'
+    })
   })
 })

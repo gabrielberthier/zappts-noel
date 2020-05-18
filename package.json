@@ -7,7 +7,7 @@
     "test": "jest",
     "test:silent": "jest --silent",
     "test:staged": "npm test --findRelatedTests",
-    "test:ci": "npm test -- --coverage"
+    "test:ci": "jest --coverage"
   },
   "keywords": [],
   "author": "",

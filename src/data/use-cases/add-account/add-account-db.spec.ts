@@ -87,7 +87,7 @@ describe('DBAddAccount Use Case', () => {
     })
   })
 
-  it('Should throw error if encrypter library throws errors', async () => {
+  it('Should throw error if repository is unable to save data and throws errors', async () => {
     const { sut, addAccountRepositoryStub } = makeSut()
     jest.spyOn(addAccountRepositoryStub, 'addUserAccount').mockReturnValueOnce(new Promise((resolve, reject) => reject(new Error())))
     const accountData = {
@@ -97,5 +97,21 @@ describe('DBAddAccount Use Case', () => {
     }
     const promise = sut.addUserAccount(accountData)
     await expect(promise).rejects.toThrow()
+  })
+
+  it('Should return an account if correct data is provided and operation is successful', async () => {
+    const { sut } = makeSut()
+    const accountData = {
+      name: 'John Doe',
+      email: 'valid_email@mail.com',
+      password: 'valid_password'
+    }
+    const account = await sut.addUserAccount(accountData)
+    expect(account).toEqual({
+      id: 'valid_id',
+      name: 'valid_name',
+      email: 'valid_email',
+      password: 'hashed_password'
+    })
   })
 })

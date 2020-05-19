@@ -2,6 +2,7 @@
 
 // }
 import { MongoHelper } from '../../mongodb/helpers/mongo-helper'
+import { AccountMongoRepository } from './account'
 
 describe('Account - Mongo Repository', () => {
   beforeAll(async function () {
@@ -12,9 +13,9 @@ describe('Account - Mongo Repository', () => {
     await MongoHelper.disconnect()
   })
 
-  it('Should return an account on success', () => {
+  it('Should return an account on success', async () => {
     const sut = new AccountMongoRepository()
-    const account = await sut.add({
+    const account = await sut.addUserAccount({
       name: 'James Delos',
       email: 'james@delos.com',
       password: 'strongpassword'

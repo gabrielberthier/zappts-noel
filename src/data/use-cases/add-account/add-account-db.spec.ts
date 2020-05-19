@@ -1,9 +1,28 @@
 import { DBAddAccount } from './add-account-db'
-import { Encrypter } from './add-account-db-protocols'
+import { Encrypter, AddAccount, AddAccountRepository } from './add-account-db-protocols'
+import { AddAccountModel } from '../../../domain/models/add-account-model'
+import { AccountModel } from '../../../domain/models/account'
 
 interface SutTypes{
   sut: DBAddAccount
   encrypterStub: Encrypter
+  addAccountRepositoryStub: AddAccountRepository
+}
+
+const makeAddAccountRepository = (): AddAccountRepository => {
+  class AddAccountRepositoryStub implements AddAccountRepository, AddAccount {
+    async addUserAccount (account: AddAccountModel): Promise<AccountModel> {
+      const fakeAccount = {
+        id: 'valid_id',
+        name: 'valid_name',
+        email: 'valid_email',
+        password: 'hashed_password'
+      }
+      return await new Promise(resolve => resolve(fakeAccount))
+    }
+  }
+
+  return new AddAccountRepositoryStub()
 }
 
 const makeEncrypter = (): Encrypter => {
@@ -18,10 +37,12 @@ const makeEncrypter = (): Encrypter => {
 
 const makeSut = (): SutTypes => {
   const encrypterStub = makeEncrypter()
-  const sut = new DBAddAccount(encrypterStub)
+  const addAccountRepositoryStub = makeAddAccountRepository()
+  const sut = new DBAddAccount(encrypterStub, addAccountRepositoryStub)
   return {
     sut,
-    encrypterStub
+    encrypterStub,
+    addAccountRepositoryStub
   }
 }
 
@@ -48,5 +69,21 @@ describe('DBAddAccount Use Case', () => {
     }
     const promise = sut.addUserAccount(accountData)
     await expect(promise).rejects.toThrow()
+  })
+
+  it('Should call AddAccountRepository with correct values', async () => {
+    const { sut, addAccountRepositoryStub } = makeSut()
+    const addSpy = jest.spyOn(addAccountRepositoryStub, 'addUserAccount')
+    const accountData = {
+      name: 'John Doe',
+      email: 'valid_email@mail.com',
+      password: 'valid_password'
+    }
+    await sut.addUserAccount(accountData)
+    expect(addSpy).toHaveBeenCalledWith({
+      name: 'John Doe',
+      email: 'valid_email@mail.com',
+      password: 'hashed_password'
+    })
   })
 })

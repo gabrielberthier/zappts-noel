@@ -3,6 +3,7 @@
 // }
 import { MongoHelper } from '../../mongodb/helpers/mongo-helper'
 import { AccountMongoRepository } from './account'
+import { AddAccountRepository } from '../../../../data/protocols/add-account-repository'
 
 describe('Account - Mongo Repository', () => {
   beforeAll(async function () {
@@ -13,8 +14,17 @@ describe('Account - Mongo Repository', () => {
     await MongoHelper.disconnect()
   })
 
-  it('Should return an account on success', async () => {
+  beforeEach(async function () {
+    await MongoHelper.getCollection('accounts').deleteMany({})
+  })
+
+  const makeSut = (): AddAccountRepository => {
     const sut = new AccountMongoRepository()
+    return sut
+  }
+
+  it('Should return an account on success', async () => {
+    const sut = makeSut()
     const account = await sut.addUserAccount({
       name: 'James Delos',
       email: 'james@delos.com',

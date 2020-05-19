@@ -11,6 +11,6 @@ export class AccountMongoRepository implements AddAccountRepository {
 
     const { _id, ...accountLessUnderscoreID } = account
 
-    return Object.assign({}, accountLessUnderscoreID, { id: _id})
+    return Object.assign({}, accountLessUnderscoreID, { id: _id })
   }
 }

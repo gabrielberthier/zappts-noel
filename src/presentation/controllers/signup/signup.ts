@@ -1,5 +1,5 @@
 import { HttpRequest, HttpResponse, Controller } from '../../protocols'
-import empty from '../../../utils/stringchecker'
+import empty from '../../../utils/empty-string'
 import { MissingParamError, InvalidParamError } from '../../errors'
 import { badRequest, serverError, responseOK } from '../../helpers/http-helper'
 import { AddAccount } from '../../../domain/use-cases/add-account'

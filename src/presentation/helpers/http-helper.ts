@@ -2,9 +2,10 @@ import { HttpResponse } from '../protocols'
 import { ServerError } from '../errors'
 
 export const badRequest = (error: Error): HttpResponse => {
+  console.log(error.message)
   return {
     statusCode: 400,
-    body: error.message
+    body: error
   }
 }
 

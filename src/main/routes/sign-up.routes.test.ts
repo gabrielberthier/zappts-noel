@@ -12,7 +12,8 @@ describe('Sign-up routes', () => {
   })
 
   beforeEach(async function () {
-    await MongoHelper.getCollection('accounts').deleteMany({})
+    const collection = await MongoHelper.getCollection('accounts')
+    await collection.deleteMany({})
   })
 
   it('Should return an account on success', async () => {
@@ -21,8 +22,6 @@ describe('Sign-up routes', () => {
       email: 'gabsthier@gmail.com',
       password: '123456',
       passwordConfirm: '123456'
-    }).expect({
-      ok: 'ok?'
-    })
+    }).expect(200)
   })
 })

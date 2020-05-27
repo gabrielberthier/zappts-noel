@@ -1,28 +1,35 @@
 import { MongoClient, Collection } from 'mongodb'
 
-export const MongoHelper = {
-  connection: null as MongoClient,
+class MongoHelperClass {
+  private connection: MongoClient
+  private uri: string
 
-  connect: async function (uri: string) {
+  async connect (uri: string): Promise<void> {
+    this.uri = uri
     this.connection = await MongoClient.connect(uri, {
       useNewUrlParser: true,
       useUnifiedTopology: true
     })
     this.connection.db()
-  },
+  }
 
-  disconnect: async function () {
+  async disconnect (): Promise<void> {
     await this.connection.close()
-  },
+    this.connection = null
+  }
 
-  getCollection (name: string): Collection {
+  async getCollection (name: string): Promise<Collection> {
+    if ((this.connection === null || !this.connection.isConnected())) {
+      await this.connect(this.uri)
+    }
     return this.connection.db().collection(name)
-  },
+  }
 
   mapCollection<T>(collection: any): T {
     const { _id, ...collectionUnderscoreID } = collection
 
     return Object.assign({}, collectionUnderscoreID, { id: _id })
   }
-
 }
+
+export const MongoHelper = new MongoHelperClass()

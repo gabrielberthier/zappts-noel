@@ -36,7 +36,7 @@ const makeSut = (): SutTypes => {
 
 const makeLogErrorRepository = (): LogErrorRepository => {
   class LogErrorRepositoryStub implements LogErrorRepository {
-    async log (errorTrack: string): Promise<void> {
+    async logError (errorTrack: string): Promise<void> {
       return await new Promise(resolve => resolve())
     }
   }
@@ -76,7 +76,7 @@ describe('Log Controller Testing', () => {
 
     // spies
     const handleSpy = jest.spyOn(controllerStub, 'handle').mockReturnValueOnce(new Promise(resolve => resolve(serverError(error))))
-    const logSpy = jest.spyOn(logger, 'log')
+    const logSpy = jest.spyOn(logger, 'logError')
 
     await sut.handle(httpRequest)
     expect(handleSpy).toHaveBeenCalledWith(httpRequest)

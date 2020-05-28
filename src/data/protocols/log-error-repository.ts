@@ -1,3 +1,3 @@
 export interface LogErrorRepository{
-  log (errorTrack: string): Promise<void>
+  logError (errorTrack: string): Promise<void>
 }

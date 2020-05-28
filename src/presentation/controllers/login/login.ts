@@ -3,10 +3,15 @@ import emptyString from '../../../utils/empty-string'
 import { badRequest, serverError } from '../../helpers/http-helper'
 import { MissingParamError, InvalidParamError } from '../../errors'
 import { EmailValidator } from '../../../data/protocols/email-validator'
+import { Authentication } from '../../../domain/use-cases/authentication'
 
 export class LoginController implements Controller {
-  constructor (private readonly emailValidator: EmailValidator) {
+  private readonly emailValidator: EmailValidator
+  private readonly authentication: Authentication
 
+  constructor (emailValidator: EmailValidator, authentication: Authentication) {
+    this.emailValidator = emailValidator
+    this.authentication = authentication
   }
 
   async handle (httpRequest: HttpRequest): Promise<HttpResponse> {
@@ -27,6 +32,7 @@ export class LoginController implements Controller {
       if (!this.emailValidator.isValid(email)) {
         return badRequest(new InvalidParamError('email'))
       }
+      await this.authentication.auth(email, password)
       return httpResponse
     } catch (error) {
       return serverError(error)

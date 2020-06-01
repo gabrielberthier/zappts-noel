@@ -132,4 +132,19 @@ describe('Login Controller test', () => {
     expect(httpresponse).toEqual(unauthorized())
     expect(spyAuth).toHaveBeenCalledWith('kyle@gmail.com', 'passworderson')
   })
+
+  it('Should receive 500 if Authentication throws error', async () => {
+    const { sut, auth } = makeSut()
+    jest.spyOn(auth, 'auth').mockImplementationOnce(async function () {
+      return await new Promise((resolve, reject) => reject(new Error('damnn')))
+    })
+    const httpRequest: HttpRequest = {
+      body: {
+        email: 'kyle@gmail',
+        password: 'passworderson'
+      }
+    }
+    const httpresponse: HttpResponse = await sut.handle(httpRequest)
+    expect(httpresponse).toEqual(serverError(new Error('damnn')))
+  })
 })

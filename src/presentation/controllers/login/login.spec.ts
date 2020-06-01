@@ -1,9 +1,7 @@
 import { LoginController } from './login'
-import { HttpResponse, HttpRequest } from '../../protocols'
+import { EmailValidator, HttpResponse, HttpRequest, Authentication } from './login-protocols'
 import { badRequest, serverError, unauthorized } from '../../helpers/http-helper'
 import { MissingParamError, InvalidParamError } from '../../errors'
-import { EmailValidator } from '../../../data/protocols/email-validator'
-import { Authentication } from '../../../domain/use-cases/authentication'
 
 interface SutTypes {
   sut: LoginController
@@ -132,5 +130,6 @@ describe('Login Controller test', () => {
     }
     const httpresponse: HttpResponse = await sut.handle(httpRequest)
     expect(httpresponse).toEqual(unauthorized())
+    expect(spyAuth).toHaveBeenCalledWith('kyle@gmail.com', 'passworderson')
   })
 })

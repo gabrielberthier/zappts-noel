@@ -1,6 +1,6 @@
 import { Controller, HttpRequest, HttpResponse } from '../../protocols'
 import emptyString from '../../../utils/empty-string'
-import { badRequest, serverError, unauthorized } from '../../helpers/http-helper'
+import { badRequest, serverError, unauthorized, responseOK } from '../../helpers/http-helper'
 import { MissingParamError, InvalidParamError } from '../../errors'
 import { EmailValidator } from '../../../data/protocols/email-validator'
 import { Authentication } from '../../../domain/use-cases/authentication'
@@ -17,12 +17,6 @@ export class LoginController implements Controller {
   async handle (httpRequest: HttpRequest): Promise<HttpResponse> {
     try {
       const requiredFields: string[] = ['email', 'password']
-      const httpResponse: HttpResponse = {
-        body: {
-
-        },
-        statusCode: 400
-      }
       for (const field of requiredFields) {
         if (emptyString(httpRequest.body[field])) {
           return badRequest(new MissingParamError(field))
@@ -36,7 +30,9 @@ export class LoginController implements Controller {
       if (emptyString(accessToken)) {
         return unauthorized()
       }
-      return httpResponse
+      return responseOK({
+        access_token: accessToken
+      })
     } catch (error) {
       return serverError(error)
     }

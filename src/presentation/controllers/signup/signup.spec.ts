@@ -5,6 +5,7 @@ import { AddAccount } from '../../../domain/use-cases/add-account'
 import { AddAccountModel } from '../../../domain/models/add-account-model'
 import { AccountModel } from '../../../domain/models/account'
 import { Validation } from '../../helpers/validators/validation'
+import { badRequest } from '../../helpers/http-helper'
 
 interface SutFactoryResolved {
   sut: SignUpController
@@ -203,5 +204,21 @@ describe('SignUp Controller', () => {
     }
     await sut.handle(httpRequest)
     expect(validationSpy).toHaveBeenCalledWith(httpRequest.body)
+  })
+
+  test('Should return 400 if Validation returns an error', async function () {
+    const { sut, validation } = sutFactory()
+    const validationSpy = jest.spyOn(validation, 'validate')
+    validationSpy.mockReturnValueOnce(new MissingParamError('any'))
+    const httpRequest = {
+      body: {
+        name: 'John T Dee',
+        email: 'johndee@email',
+        password: 'testablepassword',
+        passwordConfirm: 'testablepassword'
+      }
+    }
+    const httpResponse = await sut.handle(httpRequest)
+    expect(httpResponse).toEqual(badRequest(new MissingParamError('any')))
   })
 })

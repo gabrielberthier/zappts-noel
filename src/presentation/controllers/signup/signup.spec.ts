@@ -4,19 +4,22 @@ import { EmailValidator } from '../../../data/protocols/email-validator'
 import { AddAccount } from '../../../domain/use-cases/add-account'
 import { AddAccountModel } from '../../../domain/models/add-account-model'
 import { AccountModel } from '../../../domain/models/account'
+import { Validation } from '../../helpers/validators/validation'
 
 interface SutFactoryResolved {
   sut: SignUpController
   email: EmailValidator
   addAccount: AddAccount
+  validation: Validation
 }
 
 const sutFactory = (): SutFactoryResolved => {
   const emailValidator = makeEmailValidator()
   const addAccountStub = makeAddAccount()
-  const sut = new SignUpController(emailValidator, addAccountStub)
+  const validationStub = makeValidation()
+  const sut = new SignUpController(emailValidator, addAccountStub, validationStub)
   return {
-    sut, email: emailValidator, addAccount: addAccountStub
+    sut, email: emailValidator, addAccount: addAccountStub, validation: validationStub
   }
 }
 
@@ -27,6 +30,15 @@ const makeEmailValidator = (): EmailValidator => {
     }
   }
   return new EmailValidatorStub()
+}
+
+const makeValidation = (): Validation => {
+  class ValidationStub implements Validation {
+    validate (input: any): Error {
+      return null
+    }
+  }
+  return new ValidationStub()
 }
 
 const makeAddAccount = (): AddAccount => {
@@ -176,5 +188,20 @@ describe('SignUp Controller', () => {
       email: 'valid_email@mail.com',
       password: 'valid_password'
     })
+  })
+
+  test('Should call Validation with correct value', async function () {
+    const { sut, validation } = sutFactory()
+    const validationSpy = jest.spyOn(validation, 'validate')
+    const httpRequest = {
+      body: {
+        name: 'John T Dee',
+        email: 'johndee@email',
+        password: 'testablepassword',
+        passwordConfirm: 'testablepassword'
+      }
+    }
+    await sut.handle(httpRequest)
+    expect(validationSpy).toHaveBeenCalledWith(httpRequest.body)
   })
 })

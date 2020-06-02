@@ -58,50 +58,6 @@ const makeAddAccount = (): AddAccount => {
 }
 
 describe('SignUp Controller', () => {
-  test('Should return 400 if no name is provided', async function () {
-    const { sut } = sutFactory()
-    const httpRequest = {
-      body: {
-        email: 'johndee@email.com',
-        password: 'testablepassword',
-        passwordConfirm: 'testablepassword'
-      }
-    }
-    const httpResponse = await sut.handle(httpRequest)
-    expect(httpResponse.statusCode).toBe(400)
-    expect(httpResponse.body).toEqual(new MissingParamError('name'))
-  })
-
-  test('Should return 400 if no email is provided', async function () {
-    const { sut } = sutFactory()
-    const httpRequest = {
-      body: {
-        name: 'johndee@email.com',
-        password: 'testablepassword',
-        passwordConfirm: 'testablepassword'
-      }
-    }
-    const httpResponse = await sut.handle(httpRequest)
-    expect(httpResponse.statusCode).toBe(400)
-    expect(httpResponse.body).toEqual(new MissingParamError('email'))
-  })
-
-  test('Should return 400 if an invalid email is provided', async function () {
-    const { sut, email } = sutFactory()
-    jest.spyOn(email, 'isValid').mockReturnValueOnce(false)
-    const httpRequest = {
-      body: {
-        name: 'John T Dee',
-        email: 'johndee@email',
-        password: 'testablepassword',
-        passwordConfirm: 'testablepassword'
-      }
-    }
-    const httpResponse = await sut.handle(httpRequest)
-    expect(httpResponse.statusCode).toBe(400)
-    expect(httpResponse.body).toEqual(new InvalidParamError('email'))
-  })
-
   test('Should return 500 if EmailValidator throws errror', async function () {
     const { sut, email } = sutFactory()
     jest.spyOn(email, 'isValid').mockImplementationOnce(function () {

@@ -3,7 +3,7 @@
 // }
 import { MongoHelper } from '../../mongodb/helpers/mongo-helper'
 import { AccountMongoRepository } from './account'
-import { AddAccountRepository } from '../../../../data/protocols/add-account-repository'
+import { AddAccountRepository } from '../../../../data/protocols/db/add-account-repository'
 
 describe('Account - Mongo Repository', () => {
   beforeAll(async function () {

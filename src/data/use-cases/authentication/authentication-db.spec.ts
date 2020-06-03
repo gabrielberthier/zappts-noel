@@ -2,9 +2,11 @@ import { AuthenticationModel } from '../../../domain/use-cases/authentication/au
 import { AccountModel } from '../../../domain/models/account'
 import { LoadAccountByEmailRepository } from '../../protocols/db/load-account-by-email-repository'
 import { DBAuthentication } from './authentication-db'
+import { HashComparer } from '../../protocols/cryptography/hash-comparer'
 
 interface SutTypes {
   loadAccountByEmailRepository: LoadAccountByEmailRepository
+  hashComparer: HashComparer
   sut: DBAuthentication
 }
 
@@ -13,7 +15,7 @@ const makeFakeAccount = function (): AccountModel {
     email: 'any_email',
     id: 'any_id',
     name: 'any_name',
-    password: 'any_pass'
+    password: 'hashed_password'
   }
 
   return account
@@ -38,11 +40,24 @@ const makeFakeAuthenticationModel = function (): AuthenticationModel {
   return auth
 }
 
+const makeHashComparer = function (): HashComparer {
+  class HashComparerStub implements HashComparer {
+    async compare (password: string, hash: string): Promise<boolean> {
+      // return password === hashed
+      return true
+    }
+  }
+
+  const hashComparer = new HashComparerStub()
+  return hashComparer
+}
+
 const makeSut = function (): SutTypes {
   const loadAccountByEmailRepository = makeLoadAccountByEmailRepositoryStub()
-  const sut = new DBAuthentication(loadAccountByEmailRepository)
+  const hashComparer = makeHashComparer()
+  const sut = new DBAuthentication(loadAccountByEmailRepository, hashComparer)
   return {
-    sut, loadAccountByEmailRepository
+    sut, loadAccountByEmailRepository, hashComparer
   }
 }
 
@@ -70,5 +85,13 @@ describe('DB Authentication use case', () => {
     const auth = makeFakeAuthenticationModel()
     const token: string = await sut.auth(auth)
     expect(token).toBeNull()
+  })
+
+  it('Should HashCompare with correct password', async () => {
+    const { sut, hashComparer } = makeSut()
+    const spyCompare = jest.spyOn(hashComparer, 'compare').mockReturnValueOnce(null)
+    const auth = makeFakeAuthenticationModel()
+    await sut.auth(auth)
+    expect(spyCompare).toHaveBeenCalledWith('any_pass', 'hashed_password')
   })
 })

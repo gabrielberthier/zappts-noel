@@ -1,4 +1,5 @@
 import { Validation } from './validation'
+import { exists } from '../../../utils/object-exists'
 
 export class ValidationComposite implements Validation {
   private readonly validations: Validation[]
@@ -10,7 +11,7 @@ export class ValidationComposite implements Validation {
   validate (input: any): Error {
     for (const validation of this.validations) {
       const error = validation.validate(input)
-      if (error !== null && error !== undefined) {
+      if (exists(error)) {
         return error
       }
     }

@@ -1,7 +1,7 @@
 import { Controller, HttpRequest, HttpResponse } from '../../protocols'
 import emptyString from '../../../utils/empty-string'
 import { badRequest, serverError, unauthorized, responseOK } from '../../helpers/http/http-helper'
-import { Authentication } from '../../../domain/use-cases/authentication'
+import { Authentication } from '../../../domain/use-cases/authentication/authentication'
 import { Validation } from '../../protocols/validation'
 import { exists } from '../../../utils/object-exists'
 

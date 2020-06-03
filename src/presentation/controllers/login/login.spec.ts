@@ -2,6 +2,7 @@ import { LoginController } from './login'
 import { Validation, HttpResponse, HttpRequest, Authentication } from './login-protocols'
 import { badRequest, serverError, unauthorized, responseOK } from '../../helpers/http/http-helper'
 import { MissingParamError } from '../../errors'
+import { AuthenticationModel } from '../../../domain/use-cases/authentication'
 
 interface SutTypes {
   sut: LoginController
@@ -40,13 +41,13 @@ const makeValidation = (): Validation => {
 }
 
 const makeAuthentication = function (): Authentication {
-  class EmailValidatorStub implements Authentication {
-    async auth (email: string, password: string): Promise<string> {
+  class AuthenticationStub implements Authentication {
+    async auth (auth: AuthenticationModel): Promise<string> {
       return await new Promise(resolve => resolve('any_token'))
     }
   }
 
-  return new EmailValidatorStub()
+  return new AuthenticationStub()
 }
 
 describe('Login Controller test', () => {
@@ -60,7 +61,7 @@ describe('Login Controller test', () => {
       }
     }
     await sut.handle(httpRequest)
-    expect(authSpy).toHaveBeenCalledWith('kyle@gmail.com', 'passworderson')
+    expect(authSpy).toHaveBeenCalledWith({ email: 'kyle@gmail.com', password: 'passworderson' })
   })
 
   it('Should return 401 if an invalid credential is provided', async () => {
@@ -74,7 +75,7 @@ describe('Login Controller test', () => {
     }
     const httpresponse: HttpResponse = await sut.handle(httpRequest)
     expect(httpresponse).toEqual(unauthorized())
-    expect(spyAuth).toHaveBeenCalledWith('kyle@gmail.com', 'passworderson')
+    expect(spyAuth).toHaveBeenCalledWith({ email: 'kyle@gmail.com', password: 'passworderson' })
   })
 
   it('Should receive 500 if Authentication throws error', async () => {

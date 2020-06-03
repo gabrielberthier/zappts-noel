@@ -4,7 +4,7 @@ import { AddAccount } from '../../../domain/use-cases/add-account'
 import { AddAccountModel } from '../../../domain/models/add-account-model'
 import { AccountModel } from '../../../domain/models/account'
 import { Validation } from '../../helpers/validators/validation'
-import { badRequest } from '../../helpers/http-helper'
+import { badRequest } from '../../helpers/http/http-helper'
 
 interface SutFactoryResolved {
   sut: SignUpController

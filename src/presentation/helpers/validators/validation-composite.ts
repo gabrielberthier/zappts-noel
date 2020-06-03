@@ -1,4 +1,4 @@
-import { Validation } from './validation'
+import { Validation } from '../../protocols/validation'
 import { exists } from '../../../utils/object-exists'
 
 export class ValidationComposite implements Validation {

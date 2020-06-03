@@ -2,7 +2,7 @@ import { Controller, HttpRequest, HttpResponse } from '../../protocols'
 import emptyString from '../../../utils/empty-string'
 import { badRequest, serverError, unauthorized, responseOK } from '../../helpers/http/http-helper'
 import { Authentication } from '../../../domain/use-cases/authentication'
-import { Validation } from '../../helpers/validators/validation'
+import { Validation } from '../../protocols/validation'
 import { exists } from '../../../utils/object-exists'
 
 export class LoginController implements Controller {

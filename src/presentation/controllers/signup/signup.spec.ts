@@ -3,7 +3,7 @@ import { MissingParamError } from '../../errors/index'
 import { AddAccount } from '../../../domain/use-cases/add-account'
 import { AddAccountModel } from '../../../domain/models/add-account-model'
 import { AccountModel } from '../../../domain/models/account'
-import { Validation } from '../../helpers/validators/validation'
+import { Validation } from '../../protocols/validation'
 import { badRequest } from '../../helpers/http/http-helper'
 
 interface SutFactoryResolved {

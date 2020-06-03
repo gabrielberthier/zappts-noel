@@ -1,4 +1,4 @@
-import { Validation } from '../../../presentation/helpers/validators/validation'
+import { Validation } from '../../../presentation/protocols/validation'
 import { makeLoginValidation } from './login-validation-factory'
 
 const makeValidation = (): Validation => {

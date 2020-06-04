@@ -19,4 +19,11 @@ describe('JWT Adapter', () => {
     console.log(accessToken)
     expect(accessToken).toBeTruthy()
   })
+
+  it('Should throw exception in a case of error', async () => {
+    const sut = sutMaker()
+    jest.spyOn(jwt, 'sign').mockImplementationOnce(() => { throw new Error() })
+    const promise = sut.generate('new_value')
+    await expect(promise).rejects.toThrow()
+  })
 })

@@ -27,12 +27,12 @@ export class DBAuthentication implements Authentication {
   }
 
   async auth (auth: AuthenticationModel): Promise<string> {
-    const account = await this.loadAccountByEmailRepository.load(auth.email)
+    const account = await this.loadAccountByEmailRepository.loadAccountUsingEmail(auth.email)
     if (exists(account)) {
       const isValid = await this.hashComparer.compare(auth.password, account.password)
       if (isValid) {
         const accessToken = await this.tokenGenerator.generate(account.id)
-        await this.updateAccessTokenRepository.update(account.id, accessToken)
+        await this.updateAccessTokenRepository.updateAccessToken(account.id, accessToken)
         return accessToken
       }
     }

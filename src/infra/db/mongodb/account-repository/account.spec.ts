@@ -3,6 +3,7 @@
 // }
 import { MongoHelper } from '../../mongodb/helpers/mongo-helper'
 import { AccountMongoRepository } from './account'
+import { AccountModel } from '../../../../domain/models/account'
 
 describe('Account - Mongo Repository', () => {
   beforeAll(async function () {
@@ -44,7 +45,7 @@ describe('Account - Mongo Repository', () => {
       email: 'james@delos.com',
       password: 'strongpassword'
     })
-    const accountReturn = await sut.loadByEmail('james@delos.com')
+    const accountReturn = await sut.loadAccountUsingEmail('james@delos.com')
     expect(accountReturn).toBeTruthy()
     expect(accountReturn.id).toBeTruthy()
     expect(accountReturn.name).toBe('James Delos')
@@ -59,7 +60,19 @@ describe('Account - Mongo Repository', () => {
       email: 'james@delos.com',
       password: 'strongpassword'
     })
-    const accountReturn = await sut.loadByEmail('james@evergreen.com')
+    const accountReturn = await sut.loadAccountUsingEmail('james@evergreen.com')
     expect(accountReturn).toBeFalsy()
+  })
+
+  it('Should update account\'s access token on successful onUpdateAccessToken', async () => {
+    const sut = makeSut()
+    const res: AccountModel = await sut.addUserAccount({
+      name: 'James Delos',
+      email: 'james@delos.com',
+      password: 'strongpassword'
+    })
+    await sut.updateAccessToken(res.id, 'any_token')
+    const accountReturn = await sut.loadAccountUsingEmail('james@delos.com') as any
+    expect(accountReturn.accessToken).toBeTruthy()
   })
 })

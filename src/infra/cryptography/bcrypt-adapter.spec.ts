@@ -1,4 +1,4 @@
-import bcrypt, { hash, compare } from 'bcrypt'
+import bcrypt from 'bcrypt'
 import { BCryptAdapter } from './bcrypt-adapter'
 
 const salt = 12
@@ -31,5 +31,11 @@ describe('Bcrypt Adapter', () => {
     const compareSpy = jest.spyOn(bcrypt, 'compare')
     await sut.compare('any_value', 'any_hash')
     expect(compareSpy).toBeCalledWith('any_value', 'any_hash')
+  })
+
+  test('Should return true when comparation succeeds', async function () {
+    const sut = makeSut()
+    const isValid = await sut.compare('any_value', 'any_hash')
+    expect(isValid).toBeTruthy()
   })
 })

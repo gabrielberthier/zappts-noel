@@ -1,11 +1,11 @@
 import { DBAddAccount } from './add-account-db'
-import { Encrypter, AddAccount, AddAccountRepository } from './add-account-db-protocols'
+import { Hasher, AddAccount, AddAccountRepository } from './add-account-db-protocols'
 import { AddAccountModel } from '../../../domain/models/add-account-model'
 import { AccountModel } from '../../../domain/models/account'
 
 interface SutTypes{
   sut: DBAddAccount
-  encrypterStub: Encrypter
+  encrypterStub: Hasher
   addAccountRepositoryStub: AddAccountRepository
 }
 
@@ -25,9 +25,9 @@ const makeAddAccountRepository = (): AddAccountRepository => {
   return new AddAccountRepositoryStub()
 }
 
-const makeEncrypter = (): Encrypter => {
-  class EncrypterStub implements Encrypter {
-    async encrypt (): Promise<string> {
+const makeEncrypter = (): Hasher => {
+  class EncrypterStub implements Hasher {
+    async hash (): Promise<string> {
       return await new Promise(resolve => resolve('hashed_password'))
     }
   }
@@ -49,7 +49,7 @@ const makeSut = (): SutTypes => {
 describe('DBAddAccount Use Case', () => {
   it('Should call encrypter with correct password', async () => {
     const { sut, encrypterStub } = makeSut()
-    const encryptSpy = jest.spyOn(encrypterStub, 'encrypt')
+    const encryptSpy = jest.spyOn(encrypterStub, 'hash')
     const accountData = {
       name: 'John Doe',
       email: 'valid_email@mail.com',
@@ -61,7 +61,7 @@ describe('DBAddAccount Use Case', () => {
 
   it('Should throw error if encrypter library throws errors', async () => {
     const { sut, encrypterStub } = makeSut()
-    jest.spyOn(encrypterStub, 'encrypt').mockReturnValueOnce(new Promise((resolve, reject) => reject(new Error())))
+    jest.spyOn(encrypterStub, 'hash').mockReturnValueOnce(new Promise((resolve, reject) => reject(new Error())))
     const accountData = {
       name: 'John Doe',
       email: 'valid_email@mail.com',

@@ -12,7 +12,6 @@ export class JWTAdapter implements TokenGenerator {
     const payload: any = {
       id
     }
-    jwt.sign(payload, this.secret)
-    return null
+    return jwt.sign(payload, this.secret)
   }
 }

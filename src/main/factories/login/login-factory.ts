@@ -1,4 +1,4 @@
-import { AccountMongoRepository } from '../../../infra/db/mongodb/account-repository/aacount-mongo-repository'
+import { AccountMongoRepository } from '../../../infra/db/mongodb/account-repository/acount-mongo-repository'
 import { LogControllerDecorator } from '../../../presentation/decorators/log-controller-decorator'
 import { Controller } from '../../../presentation/protocols'
 import { LogMongoRepository } from '../../../infra/db/mongodb/log-repository/log-repository'

@@ -1,5 +1,5 @@
 import { MongoHelper } from '../helpers/mongo-helper'
-import { AccountMongoRepository } from './aacount-mongo-repository'
+import { AccountMongoRepository } from './acount-mongo-repository'
 import { AccountModel } from '../../../../domain/models/account'
 
 describe('Account - Mongo Repository', () => {

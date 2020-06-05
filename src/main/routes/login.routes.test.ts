@@ -32,4 +32,17 @@ describe('Login routes', () => {
       password: '123456'
     }).expect(200)
   })
+
+  it('Should return 200 on login', async () => {
+    const password = await hash('123456', 12)
+    await collection.insertOne({
+      name: 'El Gabus',
+      email: 'gabsthier@gmail.com',
+      password
+    })
+    await request(app).post('/api/login').send({
+      email: 'gabsthier@gmail.com',
+      password: '12356'
+    }).expect(401)
+  })
 })

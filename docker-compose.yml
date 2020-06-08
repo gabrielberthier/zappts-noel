@@ -2,12 +2,14 @@ version: "3"
 services:
   mongo:
     container_name: mongo-container
-    image: mongo:4
+    image: mongo:4.2
     restart: always
     volumes:
-      - ./data:/data/db
+      - ./mongo-logs:/var/log/mongodb/
+      - ./data:/var/lib/mongodb
     ports:
       - "27017:27017"
+    #command: mongod --config /etc/mongod.conf
   api:
     container_name: api-container
     build: .

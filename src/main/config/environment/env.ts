@@ -17,7 +17,7 @@ function eDefault (defaultParam: string, provided: any): any {
 }
 
 export const environment = {
-  mongoURL: eDefault('MONGO_URL', 'mongodb://localhost:27017/clean-node-api'),
+  mongoURL: eDefault('MONGO_URL', 'mongodb://mongo:27017/clean-node-api'),
   port: eDefault('PORT', 5050),
   jwt_secret: eDefault('JWT_SECRET', '@22mithrandir1946==')
 }

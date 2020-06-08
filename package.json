@@ -4,7 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "sucrase-node src/main/server.ts",
+    "start": "node dist/main/server.js",
+    "build": "rimraf dist && tsc",
+    "dev": "sucrase-node src/main/server.ts",
     "test": "jest --silent --noStackTrace --runInBand",
     "test:verbose": "jest ",
     "test:unit": "npm test -- --watch -c jest-unit-test-config.js",
@@ -34,6 +36,7 @@
     "eslint-plugin-standard": "^4.0.1",
     "git-commit-msg-linter": "^2.4.2",
     "jest": "^26.0.1",
+    "rimraf": "^3.0.2",
     "sucrase": "^3.15.0",
     "supertest": "^4.0.2",
     "ts-jest": "^25.5.1",

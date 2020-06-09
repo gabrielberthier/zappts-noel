@@ -20,5 +20,6 @@ services:
       - ./dist:/usr/src/clean-node-api/dist
     ports:
       - "5050:5050"
+      - "9222:9222"
     links:
       - mongo

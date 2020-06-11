@@ -28,3 +28,10 @@ export const responseOK = function (data: any): HttpResponse {
     body: data
   }
 }
+
+export const forbbiden = function (error: Error): HttpResponse {
+  return {
+    statusCode: 200,
+    body: error
+  }
+}

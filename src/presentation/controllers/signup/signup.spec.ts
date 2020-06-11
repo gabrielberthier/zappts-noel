@@ -1,8 +1,9 @@
 import { SignUpController } from './signup'
 import { MissingParamError } from '../../errors/index'
 import { Validation } from '../../protocols/validation'
-import { badRequest } from '../../helpers/http/http-helper'
+import { badRequest, serverError, responseOK } from '../../helpers/http/http-helper'
 import { AccountModel, Authentication, HttpRequest, AuthenticationModel, AddAccount, AddAccountModel } from './signup-protocols'
+import { HttpResponse } from '../../protocols'
 
 interface SutFactoryResolved {
   sut: SignUpController
@@ -87,13 +88,7 @@ describe('SignUp Controller', () => {
       }
     }
     const httpResponse = await sut.handle(httpRequest)
-    expect(httpResponse.statusCode).toBe(200)
-    expect(httpResponse.body).toEqual({
-      id: 'valid_id',
-      name: 'valid_name',
-      email: 'valid_email@mail.com',
-      password: 'valid_password'
-    })
+    expect(httpResponse).toEqual(responseOK({ accessToken: 'any_token' }))
   })
 
   test('Should call Validation with correct value', async function () {
@@ -138,5 +133,20 @@ describe('SignUp Controller', () => {
     }
     await sut.handle(httpRequest)
     expect(authSpy).toHaveBeenCalledWith({ email: 'kyle@gmail.com', password: 'passworderson' })
+  })
+
+  it('Should receive 500 if Authentication throws error', async () => {
+    const { sut, auth } = sutFactory()
+    jest.spyOn(auth, 'auth').mockImplementationOnce(async function () {
+      return await new Promise((resolve, reject) => reject(new Error('damnn')))
+    })
+    const httpRequest: HttpRequest = {
+      body: {
+        email: 'kyle@gmail',
+        password: 'passworderson'
+      }
+    }
+    const httpresponse: HttpResponse = await sut.handle(httpRequest)
+    expect(httpresponse).toEqual(serverError(new Error('damnn')))
   })
 })

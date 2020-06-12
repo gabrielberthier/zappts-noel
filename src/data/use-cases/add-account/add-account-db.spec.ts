@@ -2,11 +2,23 @@ import { DBAddAccount } from './add-account-db'
 import { Hasher, AddAccount, AddAccountRepository } from './add-account-db-protocols'
 import { AddAccountModel } from '../../../domain/models/add-account-model'
 import { AccountModel } from '../../../domain/models/account'
+import { LoadAccountByEmailRepository } from '../authentication/authentication-db-protocols'
 
 interface SutTypes{
   sut: DBAddAccount
   encrypterStub: Hasher
   addAccountRepositoryStub: AddAccountRepository
+  loadAccountByEmailRepository: LoadAccountByEmailRepository
+}
+
+const makeLoadAccountByEmailRepository = (): LoadAccountByEmailRepository => {
+  class LoadAccountByEmailRepositoryStub implements LoadAccountByEmailRepository {
+    async loadAccountUsingEmail (email: string): Promise<AccountModel> {
+      return await Promise.resolve(null)
+    }
+  }
+
+  return new LoadAccountByEmailRepositoryStub()
 }
 
 const makeAddAccountRepository = (): AddAccountRepository => {
@@ -36,13 +48,15 @@ const makeEncrypter = (): Hasher => {
 }
 
 const makeSut = (): SutTypes => {
+  const loadAccountByEmailRepository = makeLoadAccountByEmailRepository()
   const encrypterStub = makeEncrypter()
   const addAccountRepositoryStub = makeAddAccountRepository()
-  const sut = new DBAddAccount(encrypterStub, addAccountRepositoryStub)
+  const sut = new DBAddAccount(encrypterStub, addAccountRepositoryStub, loadAccountByEmailRepository)
   return {
     sut,
     encrypterStub,
-    addAccountRepositoryStub
+    addAccountRepositoryStub,
+    loadAccountByEmailRepository
   }
 }
 
@@ -113,5 +127,17 @@ describe('DBAddAccount Use Case', () => {
       email: 'valid_email',
       password: 'hashed_password'
     })
+  })
+
+  test('Should call LoadAccountByEmailRepository with correct email', async () => {
+    const { sut, loadAccountByEmailRepository } = makeSut()
+    const spy = jest.spyOn(loadAccountByEmailRepository, 'loadAccountUsingEmail')
+    const addAccountParams = {
+      email: 'any_mail@gmail.com',
+      name: 'name',
+      password: '123456'
+    }
+    await sut.addUserAccount(addAccountParams)
+    expect(spy).toHaveBeenCalledWith(addAccountParams.email)
   })
 })

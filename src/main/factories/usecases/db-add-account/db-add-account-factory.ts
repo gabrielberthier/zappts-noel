@@ -4,6 +4,6 @@ import { AddAccount } from '../../../../domain/use-cases/add-account'
 import { DBAddAccount } from '../../../../data/use-cases/add-account/add-account-db'
 
 export const makeDBAddAccountFactory = function (): AddAccount {
-  const addAccount = new DBAddAccount(new BCryptAdapter(), new AccountMongoRepository())
+  const addAccount = new DBAddAccount(new BCryptAdapter(), new AccountMongoRepository(), new AccountMongoRepository())
   return addAccount
 }

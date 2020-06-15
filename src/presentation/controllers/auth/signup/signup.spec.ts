@@ -1,9 +1,9 @@
 import { SignUpController } from './signup'
-import { MissingParamError, EmailInUseError } from '../../errors/index'
-import { Validation } from '../../protocols/validation'
-import { badRequest, serverError, responseOK, forbbiden } from '../../helpers/http/http-helper'
+import { MissingParamError, EmailInUseError } from '../../../errors/index'
+import { Validation } from '../../../protocols/validation'
+import { badRequest, serverError, responseOK, forbbiden } from '../../../helpers/http/http-helper'
 import { AccountModel, Authentication, HttpRequest, AuthenticationModel, AddAccount, AddAccountModel } from './signup-protocols'
-import { HttpResponse } from '../../protocols'
+import { HttpResponse } from '../../../protocols'
 
 interface SutFactoryResolved {
   sut: SignUpController

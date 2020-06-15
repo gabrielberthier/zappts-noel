@@ -1,7 +1,7 @@
-import { badRequest, serverError, responseOK, forbbiden } from '../../helpers/http/http-helper'
-import { exists } from '../../../utils/object-exists'
+import { badRequest, serverError, responseOK, forbbiden } from '../../../helpers/http/http-helper'
+import { exists } from '../../../../utils/object-exists'
 import { Authentication, HttpRequest, AddAccount, HttpResponse, Controller, Validation } from './signup-protocols'
-import { EmailInUseError } from '../../errors'
+import { EmailInUseError } from '../../../errors'
 
 export class SignUpController implements Controller {
   private readonly addAccount: AddAccount

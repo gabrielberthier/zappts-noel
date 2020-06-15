@@ -35,3 +35,10 @@ export const forbbiden = function (error: Error): HttpResponse {
     body: error
   }
 }
+
+export const noContent = function (): HttpResponse {
+  return {
+    statusCode: 204,
+    body: null
+  }
+}

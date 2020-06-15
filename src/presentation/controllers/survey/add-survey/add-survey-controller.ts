@@ -1,5 +1,5 @@
 import { Validation, Controller, HttpRequest, HttpResponse, AddSurvey } from './add-survey-controller-protocols'
-import { badRequest, serverError } from '../../../helpers/http/http-helper'
+import { badRequest, serverError, noContent } from '../../../helpers/http/http-helper'
 import { exists } from '../../../../utils/object-exists'
 
 export class AddSurveyController implements Controller {
@@ -17,7 +17,7 @@ export class AddSurveyController implements Controller {
         question, answers
       })
 
-      return null
+      return noContent()
     } catch (error) {
       return serverError(error)
     }

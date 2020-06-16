@@ -21,7 +21,7 @@ function sutFactory (): SutTypes {
 function addSurveyRepositoryFactory (): AddSurveyRepository {
   class AddSurveyRepositoryStub implements AddSurveyRepository {
     async addSurvey (addSurveyModel: AddSurveyModel): Promise<void> {
-      return await Promise.resolve()
+      return await new Promise(resolve => resolve())
     }
   }
 
@@ -47,5 +47,17 @@ describe('DBAddSurvey Use case', () => {
     const addSurveyModel = makeFakeSurveyData()
     await sut.add(addSurveyModel)
     expect(spy).toBeCalledWith(addSurveyModel)
+  })
+
+  it('Should throw error if AddSurveyRepository throws', async () => {
+    const { sut, addSurveyRepository } = sutFactory()
+    jest.spyOn(addSurveyRepository, 'addSurvey')
+      .mockReturnValueOnce(new Promise(function (resolve, reject) {
+        reject(new Error())
+      }))
+    const addSurveyModel = makeFakeSurveyData()
+    const promiseRejected = sut.add(addSurveyModel)
+    console.log(promiseRejected)
+    await expect(promiseRejected).rejects.toThrow()
   })
 })

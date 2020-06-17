@@ -9,9 +9,10 @@ import { AccountModel } from '../../domain/models/account'
 
 export class AuthMiddleware implements Middleware {
   private readonly loadAccountByAccessToken: LoadAccountByAccessToken
-
-  constructor (loadAccountByAccessToken: LoadAccountByAccessToken) {
+  private readonly role?: string
+  constructor (loadAccountByAccessToken: LoadAccountByAccessToken, role?: string) {
     this.loadAccountByAccessToken = loadAccountByAccessToken
+    this.role = role
   }
 
   async handle (request: HttpRequest): Promise<HttpResponse> {
@@ -20,7 +21,7 @@ export class AuthMiddleware implements Middleware {
       if (emptyString(accessToken)) {
         return forbidden(new AccessDeniedError())
       }
-      const accountModel: AccountModel = await this.loadAccountByAccessToken.loadAccount(accessToken)
+      const accountModel: AccountModel = await this.loadAccountByAccessToken.loadAccount(accessToken, this.role)
       if (!exists(accountModel)) {
         return forbidden(new AccessDeniedError())
       }

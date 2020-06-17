@@ -10,9 +10,9 @@ interface SutTypes{
   loadAccountByAccessToken: LoadAccountByAccessToken
 }
 
-function makeSut (): SutTypes {
+function makeSut (role?: string): SutTypes {
   const loadAccountByAccessToken = makeLoadAccountByAccessToken()
-  const authMiddleware = new AuthMiddleware(loadAccountByAccessToken)
+  const authMiddleware = new AuthMiddleware(loadAccountByAccessToken, role)
   return {
     sut: authMiddleware,
     loadAccountByAccessToken
@@ -53,7 +53,8 @@ describe('AuthMiddleware', () => {
   })
 
   it('Should call LoadAccountByAccessToken with correct values', async () => {
-    const { sut, loadAccountByAccessToken } = makeSut()
+    const role = 'any_role'
+    const { sut, loadAccountByAccessToken } = makeSut(role)
     const httpRequest: HttpRequest = {
       headers: {
         'x-access-token': 'any_token'
@@ -61,7 +62,7 @@ describe('AuthMiddleware', () => {
     }
     const loadAccountSpy = jest.spyOn(loadAccountByAccessToken, 'loadAccount')
     await sut.handle(httpRequest)
-    expect(loadAccountSpy).toHaveBeenCalledWith('any_token')
+    expect(loadAccountSpy).toHaveBeenCalledWith('any_token', 'any_role')
   })
 
   it('Should return 403 if no account is found by LoadAccountByAccessToken', async () => {

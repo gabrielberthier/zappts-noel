@@ -63,4 +63,16 @@ describe('AuthMiddleware', () => {
     await sut.handle(httpRequest)
     expect(loadAccountSpy).toHaveBeenCalledWith('any_token')
   })
+
+  it('Should return 403 if no account is found by LoadAccountByAccessToken', async () => {
+    const { sut, loadAccountByAccessToken } = makeSut()
+    const httpRequest: HttpRequest = {
+      headers: {
+        'x-access-token': 'any_token'
+      }
+    }
+    jest.spyOn(loadAccountByAccessToken, 'loadAccount').mockReturnValueOnce(Promise.resolve(null))
+    const httpResponse: HttpResponse = await sut.handle(httpRequest)
+    expect(httpResponse).toEqual(forbidden(new AccessDeniedError()))
+  })
 })

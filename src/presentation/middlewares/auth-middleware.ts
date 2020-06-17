@@ -4,6 +4,8 @@ import { AccessDeniedError } from '../errors'
 import { forbidden } from '../helpers/http/http-helper'
 import { LoadAccountByAccessToken } from '../../domain/use-cases/load-account-by-access-token'
 import emptyString from '../../utils/empty-string'
+import { exists } from '../../utils/object-exists'
+import { AccountModel } from '../../domain/models/account'
 
 export class AuthMiddleware implements Middleware {
   private readonly loadAccountByAccessToken: LoadAccountByAccessToken
@@ -17,7 +19,10 @@ export class AuthMiddleware implements Middleware {
     if (emptyString(accessToken)) {
       return forbidden(new AccessDeniedError())
     }
-    await this.loadAccountByAccessToken.loadAccount(accessToken)
+    const accountModel: AccountModel = await this.loadAccountByAccessToken.loadAccount(accessToken)
+    if (!exists(accountModel)) {
+      return forbidden(new AccessDeniedError())
+    }
     return null
   }
 }

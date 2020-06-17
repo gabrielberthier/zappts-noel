@@ -1,7 +1,7 @@
 import { SignUpController } from './signup'
 import { MissingParamError, EmailInUseError } from '../../../errors/index'
 import { Validation } from '../../../protocols/validation'
-import { badRequest, serverError, responseOK, forbbiden } from '../../../helpers/http/http-helper'
+import { badRequest, serverError, responseOK, forbidden } from '../../../helpers/http/http-helper'
 import { AccountModel, Authentication, HttpRequest, AuthenticationModel, AddAccount, AddAccountModel } from './signup-protocols'
 import { HttpResponse } from '../../../protocols'
 
@@ -160,6 +160,6 @@ describe('SignUp Controller', () => {
       }
     }
     const httpresponse: HttpResponse = await sut.handle(httpRequest)
-    expect(httpresponse).toEqual(forbbiden(new EmailInUseError()))
+    expect(httpresponse).toEqual(forbidden(new EmailInUseError()))
   })
 })

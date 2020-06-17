@@ -1,4 +1,4 @@
-import { badRequest, serverError, responseOK, forbbiden } from '../../../helpers/http/http-helper'
+import { badRequest, serverError, responseOK, forbidden } from '../../../helpers/http/http-helper'
 import { exists } from '../../../../utils/object-exists'
 import { Authentication, HttpRequest, AddAccount, HttpResponse, Controller, Validation } from './signup-protocols'
 import { EmailInUseError } from '../../../errors'
@@ -28,7 +28,7 @@ export class SignUpController implements Controller {
       })
 
       if (!exists(account)) {
-        return forbbiden(new EmailInUseError())
+        return forbidden(new EmailInUseError())
       }
 
       const token = await this.authentication.auth({

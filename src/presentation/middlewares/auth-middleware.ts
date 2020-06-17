@@ -1,7 +1,7 @@
 import { Middleware } from '../protocols/middleware'
 import { HttpRequest, HttpResponse } from '../protocols'
 import { AccessDeniedError } from '../errors'
-import { forbidden } from '../helpers/http/http-helper'
+import { forbidden, responseOK } from '../helpers/http/http-helper'
 import { LoadAccountByAccessToken } from '../../domain/use-cases/load-account-by-access-token'
 import emptyString from '../../utils/empty-string'
 import { exists } from '../../utils/object-exists'
@@ -23,6 +23,10 @@ export class AuthMiddleware implements Middleware {
     if (!exists(accountModel)) {
       return forbidden(new AccessDeniedError())
     }
-    return null
+    const { id, name } = accountModel
+
+    return responseOK({
+      id, name
+    })
   }
 }

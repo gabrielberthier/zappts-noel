@@ -71,4 +71,10 @@ describe('DBLoadAccountByToken set', () => {
     await sut.loadAccount('any_token', 'any_role')
     expect(loadDecrypter).toHaveBeenCalledWith('any_token', 'any_role')
   })
+
+  it('Should return an account on success', async () => {
+    const { sut } = makeSut()
+    const account = await sut.loadAccount('any_token', 'any_role')
+    expect(account).toEqual(makeFakeAccountModel())
+  })
 })

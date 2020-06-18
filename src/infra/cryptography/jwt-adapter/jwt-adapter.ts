@@ -1,7 +1,8 @@
 import { TokenGenerator } from '../../../data/protocols/cryptography/token-generator'
 import jwt from 'jsonwebtoken'
+import { TokenReader } from '../../../data/protocols/cryptography/token-reader'
 
-export class JWTAdapter implements TokenGenerator {
+export class JWTAdapter implements TokenGenerator, TokenReader {
   private readonly secret: string
 
   constructor (secret: string) {
@@ -13,5 +14,11 @@ export class JWTAdapter implements TokenGenerator {
       id
     }
     return jwt.sign(payload, this.secret)
+  }
+
+  async decrypt (token: string): Promise<string> {
+    const value: any = jwt.verify(token, this.secret)
+    console.log(value)
+    return value
   }
 }

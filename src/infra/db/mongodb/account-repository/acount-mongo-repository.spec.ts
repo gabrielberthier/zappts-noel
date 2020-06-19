@@ -92,4 +92,25 @@ describe('Account - Mongo Repository', () => {
       expect(accountReturn.password).toBe('strongpassword')
     })
   })
+
+  describe('Load account by token without role', () => {
+    it('Should return an account on loadByToken success', async () => {
+      await MongoHelper.connect(process.env.MONGO_URL)
+      const mongo = await MongoHelper.getCollection('accounts')
+      const sut = makeSut()
+      await mongo.insertOne({
+        name: 'James Delos',
+        email: 'james@delos.com',
+        password: 'strongpassword',
+        role: 'admin',
+        accessToken: 'second_token'
+      })
+      const accountReturn = await sut.loadByToken('second_token', 'admin')
+      expect(accountReturn).toBeTruthy()
+      expect(accountReturn.id).toBeTruthy()
+      expect(accountReturn.name).toBe('James Delos')
+      expect(accountReturn.email).toBe('james@delos.com')
+      expect(accountReturn.password).toBe('strongpassword')
+    })
+  })
 })

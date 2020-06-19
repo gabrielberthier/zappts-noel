@@ -75,4 +75,36 @@ describe('Survey routes', () => {
     })
     await request(app).post('/api/surveys').set('x-access-token', accessToken).send(addSurveyModel).expect(204)
   })
+
+  it('Should return 204 on post to /surveys', async () => {
+    const password = await hash('123456', 12)
+    const addSurveyModel = {
+      question: 'any_question',
+      answers: [
+        {
+          image: 'any_image',
+          answer: 'any_answer'
+        },
+        {
+          image: 'any_image2',
+          answer: 'any_answer2'
+        }
+      ]
+    }
+    const res = await accountCollection.insertOne({
+      name: 'John',
+      email: 'john@gmail.com',
+      password
+    })
+    const id = res.ops[0]._id
+    const accessToken = sign({ id }, environment.jwt_secret)
+    await accountCollection.updateOne({
+      _id: id
+    }, {
+      $set: {
+        accessToken
+      }
+    })
+    await request(app).post('/api/surveys').set('x-access-token', accessToken).send(addSurveyModel).expect(403)
+  })
 })

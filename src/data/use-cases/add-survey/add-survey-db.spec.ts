@@ -57,7 +57,6 @@ describe('DBAddSurvey Use case', () => {
       }))
     const addSurveyModel = makeFakeSurveyData()
     const promiseRejected = sut.add(addSurveyModel)
-    console.log(promiseRejected)
     await expect(promiseRejected).rejects.toThrow()
   })
 })

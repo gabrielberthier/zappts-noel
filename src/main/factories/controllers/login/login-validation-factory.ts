@@ -8,6 +8,5 @@ export const makeLoginValidation = function (): ValidationComposite {
     validations.push(new RequiredFieldValidation(field))
   }
   validations.push(new EmailValidation('email', new EmailValidatorAdapter()))
-  // console.log(validations)
   return new ValidationComposite(validations)
 }

@@ -40,6 +40,6 @@ describe('Survey routes', () => {
       email: 'gabsthier@gmail.com',
       password
     })
-    await request(app).post('/api/surveys').send(addSurveyModel).expect(204)
+    await request(app).post('/api/surveys').send(addSurveyModel).expect(403)
   })
 })

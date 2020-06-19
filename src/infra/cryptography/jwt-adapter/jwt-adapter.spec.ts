@@ -17,7 +17,6 @@ describe('JWT Adapter', () => {
     it('Should return a token on success', async () => {
       const sut = sutMaker()
       const accessToken = await sut.generate('new_value')
-      console.log(accessToken)
       expect(accessToken).toBeTruthy()
     })
 

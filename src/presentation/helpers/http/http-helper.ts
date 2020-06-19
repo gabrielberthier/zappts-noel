@@ -31,7 +31,7 @@ export const responseOK = function (data: any): HttpResponse {
 
 export const forbidden = function (error: Error): HttpResponse {
   return {
-    statusCode: 200,
+    statusCode: 403,
     body: error
   }
 }

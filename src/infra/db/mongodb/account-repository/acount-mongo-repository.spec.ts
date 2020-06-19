@@ -1,8 +1,11 @@
 import { MongoHelper } from '../helpers/mongo-helper'
 import { AccountMongoRepository } from './acount-mongo-repository'
 import { AccountModel } from '../../../../domain/models/account'
+import { Collection } from 'mongodb'
 
 describe('Account - Mongo Repository', () => {
+  let accountCollection: Collection
+
   beforeAll(async function () {
     await MongoHelper.connect(process.env.MONGO_URL)
   })
@@ -12,7 +15,7 @@ describe('Account - Mongo Repository', () => {
   })
 
   beforeEach(async function () {
-    const accountCollection = await MongoHelper.getCollection('accounts')
+    accountCollection = await MongoHelper.getCollection('accounts')
     await accountCollection.deleteMany({})
   })
 
@@ -75,10 +78,8 @@ describe('Account - Mongo Repository', () => {
 
   describe('Load account by token without role', () => {
     it('Should return an account on loadByToken success', async () => {
-      await MongoHelper.connect(process.env.MONGO_URL)
-      const mongo = await MongoHelper.getCollection('accounts')
       const sut = makeSut()
-      await mongo.insertOne({
+      await accountCollection.insertOne({
         name: 'James Delos',
         email: 'james@delos.com',
         password: 'strongpassword',
@@ -93,24 +94,33 @@ describe('Account - Mongo Repository', () => {
     })
   })
 
-  describe('Load account by token without role', () => {
-    it('Should return an account on loadByToken success', async () => {
-      await MongoHelper.connect(process.env.MONGO_URL)
-      const mongo = await MongoHelper.getCollection('accounts')
-      const sut = makeSut()
-      await mongo.insertOne({
-        name: 'James Delos',
-        email: 'james@delos.com',
-        password: 'strongpassword',
-        role: 'admin',
-        accessToken: 'second_token'
-      })
-      const accountReturn = await sut.loadByToken('second_token', 'admin')
-      expect(accountReturn).toBeTruthy()
-      expect(accountReturn.id).toBeTruthy()
-      expect(accountReturn.name).toBe('James Delos')
-      expect(accountReturn.email).toBe('james@delos.com')
-      expect(accountReturn.password).toBe('strongpassword')
+  it('Should return an account on loadByToken success', async () => {
+    const sut = makeSut()
+    await accountCollection.insertOne({
+      name: 'James Delos',
+      email: 'james@delos.com',
+      password: 'strongpassword',
+      role: 'admin',
+      accessToken: 'second_token'
     })
+    const accountReturn = await sut.loadByToken('second_token', 'admin')
+    expect(accountReturn).toBeTruthy()
+    expect(accountReturn.id).toBeTruthy()
+    expect(accountReturn.name).toBe('James Delos')
+    expect(accountReturn.email).toBe('james@delos.com')
+    expect(accountReturn.password).toBe('strongpassword')
+  })
+
+  it('Should return null on loadByToken fail', async () => {
+    const sut = makeSut()
+    await accountCollection.insertOne({
+      name: 'James Delos',
+      email: 'james@delos.com',
+      password: 'strongpassword',
+      role: 'admin',
+      accessToken: 'second_token'
+    })
+    const accountReturn = await sut.loadByToken('any', 'admin')
+    expect(accountReturn).toBeNull()
   })
 })

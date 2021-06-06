@@ -1,6 +1,7 @@
 import { Address } from './address'
 
-export interface LetterSender{
+export interface LetterSenderModel{
+  id: string|null
   name: string
   surname: string
   birthday: Date

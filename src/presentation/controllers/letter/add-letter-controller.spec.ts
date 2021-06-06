@@ -1,7 +1,7 @@
-import { Validation, AddSurvey, HttpRequest, HttpResponse } from './add-survey-controller-protocols'
+import { Validation, AddSurvey, HttpRequest, HttpResponse } from './letter-protocols'
 import { AddSurveyController } from './add-survey-controller'
 import { badRequest, serverError, noContent } from '../../../helpers/http/http-helper'
-import { AddSurveyModel } from '@/domain/use-cases/add-survey'
+import { AddSurveyModel } from '../../../../domain/use-cases/add-survey'
 
 interface SutTypes {
   sut: AddSurveyController

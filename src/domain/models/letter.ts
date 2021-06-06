@@ -1,7 +1,8 @@
-import { LetterSender } from './letter-sender'
+import { LetterSenderModel } from './letter-sender'
 
-export interface Letter{
-  sender: LetterSender
+export interface LetterModel{
+  id: string|null
+  sender: LetterSenderModel
   text: string
   createdAt: Date
 }

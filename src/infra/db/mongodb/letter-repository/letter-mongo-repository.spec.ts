@@ -1,6 +1,6 @@
 import { MongoHelper } from '../helpers/mongo-helper'
 import { Collection } from 'mongodb'
-import { LetterRepository } from '@/data/protocols/db/letter/letter-repository'
+import { LetterRepository } from '../../../../data/protocols/db/letter/letter-repository'
 import { MongoLetterRepository } from './letter-repository'
 
 let lettersCollection: Collection

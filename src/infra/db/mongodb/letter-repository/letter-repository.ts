@@ -3,10 +3,20 @@ import { AccountModel } from '../../../../domain/models/account'
 import { MongoHelper } from '../helpers/mongo-helper'
 import { exists } from '../../../../utils/object-exists'
 import { AddLetterRepository } from '@/data/protocols/db/letter/add-letter-repository'
-import { LetterModelDto } from '@/domain/models/add-letter-dto'
-import { LetterModel } from '@/domain/models/letter'
+import { LetterModelDto } from '../../../../domain/models/add-letter-dto'
+import { LetterModel } from '../../../../domain/models/letter'
+import { SelectLettersRepository } from '../../../../data/protocols/db/letter/select-letter-repository'
 
-export class MongoLetterRepository implements AddLetterRepository {
+export class MongoLetterRepository implements AddLetterRepository, SelectLettersRepository {
+  async getAll (): Promise<LetterModel[]> {
+    const collection = await MongoHelper.getCollection('letters')
+    const lettersRaw = (await collection.find().toArray())
+
+    const letters: LetterModel[] = lettersRaw.map((el) => MongoHelper.mapCollection<LetterModel>(el))
+
+    return letters
+  }
+
   async addLetter (letterModelDto: LetterModelDto): Promise<LetterModel> {
     const collection = await MongoHelper.getCollection('letters')
     const letterModel: LetterModel = await collection.findOne({ 'sender.cpf': letterModelDto.sender.cpf })

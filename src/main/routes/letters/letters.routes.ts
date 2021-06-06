@@ -7,6 +7,7 @@ import { addLettersControllerFactory } from '../../factories/controllers/letters
 function routefy (router: Router): void {
   router.post('/letter', adaptRoute(addLettersControllerFactory()))
   router.get('/letter', adaptRoute(selectLettersControllerFactory()))
+  router.delete('/delete')
 }
 
 export default routefy

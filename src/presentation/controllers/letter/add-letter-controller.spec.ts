@@ -13,7 +13,26 @@ interface SutTypes {
 function addLetterFactory (): AddLetter {
   class AddSurveyStub implements AddLetter {
     async add (model: LetterModel): Promise<LetterModel> {
-      return null
+      return {
+        id: '',
+        sender: {
+          name: 'Maria Julia',
+          surname: 'Nogueira Berthier',
+          birthday: new Date(),
+          contact: '98 99999-0000',
+          cpf: '',
+          address: {
+            uf: 'MA',
+            city: 'Sao Luis',
+            cep: '65066-330',
+            number: '145',
+            complement: '',
+            place: 'Rua dos Bobos'
+          }
+        },
+        text: 'Dear, Santa...',
+        createdAt: new Date()
+      }
     }
   }
 
@@ -48,7 +67,7 @@ function makeFakeRequest (): HttpRequest {
         surname: 'Nogueira Berthier',
         birthday: new Date(),
         contact: '98 99999-0000',
-        cpf: '946546546',
+        cpf: '',
         address: {
           uf: 'MA',
           city: 'Sao Luis',

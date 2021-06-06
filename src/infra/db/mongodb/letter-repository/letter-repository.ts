@@ -8,8 +8,14 @@ import { LetterModel } from '@/domain/models/letter'
 
 export class MongoLetterRepository implements AddLetterRepository {
   async addLetter (letterModelDto: LetterModelDto): Promise<LetterModel> {
-    const accountCollection = await MongoHelper.getCollection('letters')
-    const result = await accountCollection.insertOne({ ...letterModelDto, createdAt: new Date() })
+    const collection = await MongoHelper.getCollection('letters')
+    const letterModel: LetterModel = await collection.findOne({ 'sender.cpf': letterModelDto.sender.cpf })
+
+    if (exists(letterModel)) {
+      return null
+    }
+
+    const result = await collection.insertOne({ ...letterModelDto, createdAt: new Date() })
 
     return MongoHelper.mapCollection<LetterModel>(result.ops[0])
   }

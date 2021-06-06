@@ -1,20 +1,31 @@
-import { Validation, AddSurvey, HttpRequest, HttpResponse } from './letter-protocols'
-import { AddSurveyController } from './add-survey-controller'
-import { badRequest, serverError, noContent } from '../../../helpers/http/http-helper'
-import { AddSurveyModel } from '../../../../domain/use-cases/add-survey'
+import { Validation, HttpRequest, HttpResponse } from './letter-protocols'
+import { AddLetterController } from './add-letter-controller'
+import { badRequest, serverError, responseOK } from '../../helpers/http/http-helper'
+import { AddLetter } from '@/domain/use-cases/letters/add-letter'
+import { LetterModel } from '@/domain/models/letter'
 
 interface SutTypes {
-  sut: AddSurveyController
+  sut: AddLetterController
   validation: Validation
-  addSurvey: AddSurvey
+  addLetter: AddLetter
+}
+
+function addLetterFactory (): AddLetter {
+  class AddSurveyStub implements AddLetter {
+    async add (model: LetterModel): Promise<LetterModel> {
+      return null
+    }
+  }
+
+  return new AddSurveyStub()
 }
 
 const sutFactory = function (): SutTypes {
   const validation = validationFactory()
-  const addSurvey = addSurveyFactory()
-  const sut = new AddSurveyController(validation, addSurvey)
+  const addLetter = addLetterFactory()
+  const sut = new AddLetterController(validation, addLetter)
   return {
-    sut, validation, addSurvey
+    sut, validation, addLetter
   }
 }
 
@@ -29,25 +40,25 @@ function validationFactory (): Validation {
   return validation
 }
 
-function addSurveyFactory (): AddSurvey {
-  class AddSurveyStub implements AddSurvey {
-    async add (addSurveyModel: AddSurveyModel): Promise<void> {
-      return await Promise.resolve()
-    }
-  }
-
-  const validation = new AddSurveyStub()
-  return validation
-}
-
 function makeFakeRequest (): HttpRequest {
   const httpRequest: HttpRequest = {
     body: {
-      question: 'any_question',
-      answers: [{
-        image: 'any_image',
-        answer: 'any_answer'
-      }]
+      sender: {
+        name: 'Maria Julia',
+        surname: 'Nogueira Berthier',
+        birthday: new Date(),
+        contact: '98 99999-0000',
+        cpf: '946546546',
+        address: {
+          uf: 'MA',
+          city: 'Sao Luis',
+          cep: '65066-330',
+          number: '145',
+          complement: '',
+          place: 'Rua dos Bobos'
+        }
+      },
+      text: 'Dear, Santa...'
     }
   }
   return httpRequest
@@ -70,26 +81,26 @@ describe('Add Survey Controller', () => {
     expect(response).toEqual(badRequest(new Error()))
   })
 
-  it('Should AddSurvey with correct values', async () => {
-    const { sut, addSurvey } = sutFactory()
-    const addspy = jest.spyOn(addSurvey, 'add')
+  it('Should call AddLetter with correct values', async () => {
+    const { sut, addLetter } = sutFactory()
+    const addspy = jest.spyOn(addLetter, 'add')
     const httpRequest = makeFakeRequest()
     await sut.handle(httpRequest)
     expect(addspy).toBeCalledWith(httpRequest.body)
   })
 
   it('Should return 500 if AddSurvey throws', async () => {
-    const { sut, addSurvey } = sutFactory()
-    jest.spyOn(addSurvey, 'add').mockReturnValueOnce(Promise.reject(new Error()))
+    const { sut, addLetter } = sutFactory()
+    jest.spyOn(addLetter, 'add').mockReturnValueOnce(Promise.reject(new Error()))
     const httpRequest = makeFakeRequest()
     const response: HttpResponse = await sut.handle(httpRequest)
     expect(response).toEqual(serverError(new Error()))
   })
 
-  it('Should return 204 on success', async () => {
+  it('Should return 200 on success', async () => {
     const { sut } = sutFactory()
     const httpRequest = makeFakeRequest()
     const response: HttpResponse = await sut.handle(httpRequest)
-    expect(response).toEqual(noContent())
+    expect(response).toEqual(responseOK({ message: 'Cartinha registrada com sucesso!' }))
   })
 })

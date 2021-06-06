@@ -48,6 +48,7 @@
   "dependencies": {
     "@types/bcrypt": "^3.0.0",
     "bcrypt": "^5.0.0",
+    "cpf-cnpj-validator": "^1.0.3",
     "express": "^4.17.1",
     "fast-glob": "^3.2.2",
     "jsonwebtoken": "^8.5.1",

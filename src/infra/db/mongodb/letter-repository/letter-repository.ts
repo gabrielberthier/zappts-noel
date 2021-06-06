@@ -6,8 +6,22 @@ import { AddLetterRepository } from '@/data/protocols/db/letter/add-letter-repos
 import { LetterModelDto } from '../../../../domain/models/add-letter-dto'
 import { LetterModel } from '../../../../domain/models/letter'
 import { SelectLettersRepository } from '../../../../data/protocols/db/letter/select-letter-repository'
+import { DeleteLetterRepository } from '@/data/protocols/db/letter/delete-letter-repository'
+import { ObjectID } from 'bson'
 
-export class MongoLetterRepository implements AddLetterRepository, SelectLettersRepository {
+export class MongoLetterRepository implements AddLetterRepository, SelectLettersRepository, DeleteLetterRepository {
+  async deleteLetter (id: string): Promise<LetterModel> {
+    const collection = await MongoHelper.getCollection('letters')
+    const objectId = new ObjectID(id)
+    const letter = await collection.find({ _id: objectId }).toArray()
+
+    const model: LetterModel = MongoHelper.mapCollection<LetterModel>(letter.pop())
+
+    await collection.deleteOne({ _id: objectId })
+
+    return model
+  }
+
   async getAll (): Promise<LetterModel[]> {
     const collection = await MongoHelper.getCollection('letters')
     const lettersRaw = (await collection.find().toArray())

@@ -3,11 +3,12 @@ import { selectLettersControllerFactory } from '../../factories/controllers/lett
 import { Router } from 'express'
 import { adaptRoute } from '../../adapters/express/express-route-adapter'
 import { addLettersControllerFactory } from '../../factories/controllers/letters/create/add-letters-controller-factory'
+import { deleteLettersControllerFactory } from '../../factories/controllers/letters/delete/delete-letter-controller-factory'
 
 function routefy (router: Router): void {
   router.post('/letter', adaptRoute(addLettersControllerFactory()))
   router.get('/letter', adaptRoute(selectLettersControllerFactory()))
-  router.delete('/delete')
+  router.delete('/letter/:id', adaptRoute(deleteLettersControllerFactory()))
 }
 
 export default routefy

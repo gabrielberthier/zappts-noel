@@ -3,6 +3,7 @@ import { serverError, responseOK, badRequest } from '../../helpers/http/http-hel
 import { UpdateLetter } from '../../../domain/use-cases/letters/update-letter'
 import { Validation } from '../../../presentation/protocols'
 import { exists } from '../../../utils/object-exists'
+import { WrongIdFormat } from '../../../presentation/errors/wrong-id-format'
 
 export class UpdateLetterController implements Controller {
   constructor (
@@ -25,6 +26,9 @@ export class UpdateLetterController implements Controller {
 
       return responseOK({ message: 'Cartinha atualizada com sucesso!', letterSaved })
     } catch (error) {
+      if (error instanceof WrongIdFormat) {
+        return badRequest(error)
+      }
       return serverError(error)
     }
   }

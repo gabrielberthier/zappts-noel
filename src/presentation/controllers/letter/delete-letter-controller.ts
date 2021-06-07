@@ -1,6 +1,7 @@
 import { Controller, HttpRequest, HttpResponse } from './letter-protocols'
-import { serverError, responseOK } from '../../helpers/http/http-helper'
+import { serverError, responseOK, badRequest } from '../../helpers/http/http-helper'
 import { DeleteLetter } from '@/domain/use-cases/letters/delete-letter'
+import { WrongIdFormat } from '../../../presentation/errors/wrong-id-format'
 
 export class DeleteLetterController implements Controller {
   constructor (
@@ -13,6 +14,9 @@ export class DeleteLetterController implements Controller {
 
       return responseOK(await this.deleteLetter.delete(id))
     } catch (error) {
+      if (error instanceof WrongIdFormat) {
+        return badRequest(error)
+      }
       return serverError(error)
     }
   }

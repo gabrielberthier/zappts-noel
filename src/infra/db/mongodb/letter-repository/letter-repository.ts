@@ -5,8 +5,9 @@ import { LetterModelDto } from '../../../../domain/models/add-letter-dto'
 import { LetterModel } from '../../../../domain/models/letter'
 import { SelectLettersRepository } from '../../../../data/protocols/db/letter/select-letter-repository'
 import { DeleteLetterRepository } from '@/data/protocols/db/letter/delete-letter-repository'
-import { ObjectID } from 'bson'
+import { ObjectId, ObjectID } from 'bson'
 import { UpdateLetterRepository } from '@/data/protocols/db/letter/update-letter-repository'
+import { WrongIdFormat } from '../../../../presentation/errors/wrong-id-format'
 
 export class MongoLetterRepository implements AddLetterRepository, SelectLettersRepository, DeleteLetterRepository, UpdateLetterRepository {
   async getAll (): Promise<LetterModel[]> {
@@ -33,7 +34,7 @@ export class MongoLetterRepository implements AddLetterRepository, SelectLetters
 
   async updateLetter (id: string, letterDto: LetterModelDto): Promise<LetterModel> {
     const collection = await MongoHelper.getCollection('letters')
-    const objectId = new ObjectID(id)
+    const objectId = this.createId(id)
     const letter = await collection.find({ _id: objectId }).toArray()
 
     const subject: LetterModel = MongoHelper.mapCollection<LetterModel>(letter.pop())
@@ -55,7 +56,7 @@ export class MongoLetterRepository implements AddLetterRepository, SelectLetters
 
   async deleteLetter (id: string): Promise<LetterModel> {
     const collection = await MongoHelper.getCollection('letters')
-    const objectId = new ObjectID(id)
+    const objectId = this.createId(id)
     const letter = await collection.find({ _id: objectId }).toArray()
 
     const model: LetterModel = MongoHelper.mapCollection<LetterModel>(letter.pop())
@@ -63,5 +64,13 @@ export class MongoLetterRepository implements AddLetterRepository, SelectLetters
     await collection.deleteOne({ _id: objectId })
 
     return model
+  }
+
+  private createId (id: string): ObjectId {
+    try {
+      return new ObjectID(id)
+    } catch (error) {
+      throw new WrongIdFormat()
+    }
   }
 }

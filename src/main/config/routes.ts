@@ -27,7 +27,7 @@ export default (app: Express): void => {
   //   callback(router)
   // })
   getAllFiles(`${__dirname}/../routes`).map(async function (file) {
-    if (!file.includes('.test')) {
+    if (!file.includes('.test') && !file.endsWith('.map')) {
       const callback = (await import(`../routes/${file}`)).default
       callback(router)
     }

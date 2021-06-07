@@ -41,7 +41,11 @@ export class MongoLetterRepository implements AddLetterRepository, SelectLetters
     if (exists(subject)) {
       const model = Object.assign({}, subject, letterDto)
 
-      await collection.updateOne({ _id: id }, model)
+      await collection.updateOne({ _id: objectId }, {
+        $set: {
+          ...letterDto
+        }
+      })
 
       return model
     }

@@ -2,10 +2,10 @@
 Teste técnico para a Zappts
 
 ## FUNCIONAMENTO DA API
-
-Crie um usuário via o endpoint (host)/api/sign-up/ ou fazendo login (host)/api/login/
-Receba o TOKEN
-Ponha no header da próxima requisição para ter acesso aos recursos da API nos endpoints de letters
+-------
+1. Crie um usuário via o endpoint (host)/api/sign-up/ ou fazendo login (host)/api/login/
+2. Receba o TOKEN
+3. Ponha no header (*x-access-token*) da próxima requisição para ter acesso aos recursos da API nos endpoints de letters
 
 Endpoints:
 - Listar: -GET api/letter/

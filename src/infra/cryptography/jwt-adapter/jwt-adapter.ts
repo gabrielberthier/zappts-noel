@@ -18,7 +18,7 @@ export class JWTAdapter implements TokenGenerator, TokenReader {
 
   async decrypt (token: string): Promise<string> {
     const value: any = jwt.verify(token, this.secret)
-    console.log(value)
+
     return value
   }
 }

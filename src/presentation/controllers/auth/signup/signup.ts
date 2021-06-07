@@ -37,7 +37,6 @@ export class SignUpController implements Controller {
 
       return responseOK({ accessToken: token })
     } catch (error) {
-      console.error(error)
       return serverError(error)
     }
   }

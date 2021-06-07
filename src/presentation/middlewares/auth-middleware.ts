@@ -18,12 +18,12 @@ export class AuthMiddleware implements Middleware {
   async handle (request: HttpRequest): Promise<HttpResponse> {
     try {
       const accessToken = request.headers?.['x-access-token']
-      console.log(accessToken)
+
       if (emptyString(accessToken)) {
         return forbidden(new AccessDeniedError())
       }
       const accountModel: AccountModel = await this.loadAccountByAccessToken.loadAccount(accessToken, this.role)
-      console.log(accountModel)
+
       if (!exists(accountModel)) {
         return forbidden(new AccessDeniedError())
       }
